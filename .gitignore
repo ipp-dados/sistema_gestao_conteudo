@@ -1,0 +1,18 @@
+# Credenciais e autenticação
+credentials.json
+client_secret*.json
+token.json
+token.pickle
+.streamlit/secrets.toml
+
+# Dados locais de teste
+conteudos_teste.json
+
+# Ambiente Python
+.env
+.venv/
+__pycache__/
+*.pyc
+
+# Arquivos temporários
+*.log
