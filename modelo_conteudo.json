@@ -1,0 +1,22 @@
+
+{
+    "versao_modelo": "1.0",
+    "projeto": {
+      "id_projeto": "PRIMEIRA-INFANCIA",
+      "nome": "Primeira Infância"
+    },
+    "conteudos": [
+      {
+        "id_conteudo": "EXEMPLO-001",
+        "titulo": "População de 0 a 6 anos",
+        "descricao": "Indicador de população infantil",
+        "texto": "",
+        "status": "Rascunho",
+        "fonte_texto": "",
+        "arquivos_dados": [
+          "censo_sidra_populacao_0_6_sexo_2022.csv"
+        ]
+      }
+    ]
+  }
+  

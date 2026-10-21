@@ -1,6 +1,7 @@
 
 import pandas as pd
 import streamlit as st
+from leitor_csv import listar_csvs, ler_csv
 
 from repositorio_sheets import (
     listar_conteudos,
@@ -316,11 +317,35 @@ elif pagina == "Conteúdos":
 
 
 elif pagina == "Indicadores":
-    st.subheader("Indicadores")
+    st.subheader("Indicadores da Primeira Infância")
 
-    st.info(
-        "Catálogo de indicadores em desenvolvimento."
-    )
+    st.write("Consulte os CSVs gerados pelos pipelines do projeto.")
+
+    try:
+        arquivos = listar_csvs()
+
+        if arquivos:
+            arquivo_selecionado = st.selectbox(
+                "Selecione um arquivo CSV:",
+                arquivos
+            )
+
+            dados = ler_csv(arquivo_selecionado)
+
+            st.success(f"Arquivo carregado: {arquivo_selecionado}")
+
+            st.write(f"Total de registros: {len(dados)}")
+
+            st.dataframe(
+                dados,
+                width="stretch",
+                hide_index=True
+            )
+        else:
+            st.info("Nenhum CSV encontrado.")
+
+    except (FileNotFoundError, ValueError, OSError, UnicodeError, pd.errors.ParserError) as erro:
+        st.error(f"Não foi possível carregar os CSVs: {erro}")
 
 
 elif pagina == "Revisões":
