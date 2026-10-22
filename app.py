@@ -2,6 +2,7 @@
 import pandas as pd
 import streamlit as st
 from leitor_csv import listar_csvs, ler_csv
+from importador_json import importar_json
 
 from repositorio_sheets import (
     listar_conteudos,
@@ -26,6 +27,7 @@ pagina = st.sidebar.radio(
         "Início",
         "Conteúdos",
         "Indicadores",
+        "Importação JSON",
         "Revisões",
         "Exportação CSV",
     ],
@@ -346,6 +348,65 @@ elif pagina == "Indicadores":
 
     except (FileNotFoundError, ValueError, OSError, UnicodeError, pd.errors.ParserError) as erro:
         st.error(f"Não foi possível carregar os CSVs: {erro}")
+
+elif pagina == "Importação JSON":
+    st.subheader("Importação de conteúdos por JSON")
+
+    st.write(
+        "Carregue e valide os conteúdos padronizados "
+        "antes de importá-los para o sistema."
+    )
+
+    arquivo_json = st.file_uploader(
+        "Selecione um arquivo JSON",
+        type=["json"]
+    )
+
+    if arquivo_json is not None:
+        import tempfile
+        from pathlib import Path
+
+        caminho_temporario = None
+
+        try:
+            with tempfile.NamedTemporaryFile(
+                suffix=".json",
+                delete=False
+            ) as arquivo:
+                arquivo.write(arquivo_json.getvalue())
+                caminho_temporario = Path(arquivo.name)
+
+            dados = importar_json(caminho_temporario)
+
+            st.success("JSON validado com sucesso!")
+
+            st.write(
+                "Projeto:",
+                dados["projeto"]["id_projeto"]
+            )
+
+            st.write(
+                "Total de conteúdos:",
+                len(dados["conteudos"])
+            )
+
+            st.dataframe(
+                pd.DataFrame(dados["conteudos"]),
+                width="stretch",
+                hide_index=True
+            )
+
+            st.info(
+                "Modo de pré-visualização: "
+                "nenhum conteúdo foi gravado no Google Sheets."
+            )
+
+        except (ValueError, OSError, UnicodeError) as erro:
+            st.error(f"Erro na importação: {erro}")
+
+        finally:
+            if caminho_temporario is not None:
+                caminho_temporario.unlink(missing_ok=True)
 
 
 elif pagina == "Revisões":
