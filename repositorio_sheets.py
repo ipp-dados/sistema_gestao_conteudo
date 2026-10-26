@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 
 from conexao_sheets import conectar_planilha
 
+
 COLUNAS = [
     "id_projeto",
     "id_conteudo",
@@ -12,15 +13,18 @@ COLUNAS = [
     "status",
     "csv_associado",
     "atualizado_em",
+    "fonte_texto",
 ]
 
 
 def listar_conteudos():
+    """Consulta os conteúdos cadastrados no Google Sheets."""
     aba = conectar_planilha()
     return aba.get_all_records()
 
 
 def cadastrar_conteudo(dados):
+    """Cadastra um conteúdo sem duplicar seus identificadores."""
     aba = conectar_planilha()
     registros = aba.get_all_records()
 
@@ -34,6 +38,11 @@ def cadastrar_conteudo(dados):
             )
 
     novo_registro = dados.copy()
+
+    novo_registro["fonte_texto"] = novo_registro.get(
+        "fonte_texto", ""
+    )
+
     novo_registro["atualizado_em"] = (
         datetime.now(timezone.utc).isoformat()
     )
@@ -45,6 +54,7 @@ def cadastrar_conteudo(dados):
 
 
 def atualizar_conteudo(dados, registro_original):
+    """Atualiza o conteúdo, verificando alterações anteriores."""
     aba = conectar_planilha()
     registros = aba.get_all_records()
 
@@ -55,6 +65,7 @@ def atualizar_conteudo(dados, registro_original):
         "status",
         "csv_associado",
         "atualizado_em",
+        "fonte_texto",
     ]
 
     for numero_linha, registro in enumerate(registros, start=2):
@@ -79,12 +90,19 @@ def atualizar_conteudo(dados, registro_original):
                 )
 
             novo_registro = dados.copy()
+
+            # Preserva a fonte existente quando não informada.
+            if "fonte_texto" not in novo_registro:
+                novo_registro["fonte_texto"] = registro.get(
+                    "fonte_texto", ""
+                )
+
             novo_registro["atualizado_em"] = (
                 datetime.now(timezone.utc).isoformat()
             )
 
             aba.update(
-                range_name=f"A{numero_linha}:H{numero_linha}",
+                range_name=f"A{numero_linha}:I{numero_linha}",
                 values=[
                     [
                         novo_registro.get(coluna, "")
@@ -93,6 +111,7 @@ def atualizar_conteudo(dados, registro_original):
                 ],
                 value_input_option="RAW",
             )
+
             return
 
     raise ValueError(
