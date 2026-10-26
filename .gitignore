@@ -16,3 +16,4 @@ __pycache__/
 
 # Arquivos temporários
 *.logtoken_antigo.json
+token_antigo.json 
