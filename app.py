@@ -2,7 +2,7 @@
 import pandas as pd
 import streamlit as st
 from leitor_csv import listar_csvs, ler_csv
-from importador_json import importar_json
+from importador_json import importar_json, verificar_duplicidades
 
 from repositorio_sheets import (
     listar_conteudos,
@@ -346,8 +346,15 @@ elif pagina == "Indicadores":
         else:
             st.info("Nenhum CSV encontrado.")
 
-    except (FileNotFoundError, ValueError, OSError, UnicodeError, pd.errors.ParserError) as erro:
+    except (
+        FileNotFoundError,
+        ValueError,
+        OSError,
+        UnicodeError,
+        pd.errors.ParserError
+    ) as erro:
         st.error(f"Não foi possível carregar os CSVs: {erro}")
+
 
 elif pagina == "Importação JSON":
     st.subheader("Importação de conteúdos por JSON")
@@ -395,6 +402,46 @@ elif pagina == "Importação JSON":
                 width="stretch",
                 hide_index=True
             )
+
+            # Compara os conteúdos do JSON com o Google Sheets.
+            st.subheader("Verificação de duplicidades")
+
+            novos, existentes = verificar_duplicidades(
+                dados,
+                conteudos
+            )
+
+            col1, col2 = st.columns(2)
+
+            col1.metric(
+                "Conteúdos novos",
+                len(novos)
+            )
+
+            col2.metric(
+                "Já cadastrados",
+                len(existentes)
+            )
+
+            if novos:
+                st.write("Conteúdos novos:")
+                st.dataframe(
+                    pd.DataFrame(novos),
+                    width="stretch",
+                    hide_index=True
+                )
+
+            if existentes:
+                st.warning(
+                    "Estes conteúdos já existem no Google Sheets "
+                    "e não devem ser cadastrados novamente."
+                )
+
+                st.dataframe(
+                    pd.DataFrame(existentes),
+                    width="stretch",
+                    hide_index=True
+                )
 
             st.info(
                 "Modo de pré-visualização: "

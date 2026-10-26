@@ -99,9 +99,40 @@ def importar_json(caminho):
     return dados
 
 
+def verificar_duplicidades(dados_json, registros_sheets):
+    """Compara os conteúdos do JSON com os registros existentes."""
+
+    id_projeto = dados_json["projeto"]["id_projeto"]
+
+    ids_existentes = {
+        (
+            str(registro["id_projeto"]),
+            str(registro["id_conteudo"])
+        )
+        for registro in registros_sheets
+    }
+
+    novos = []
+    existentes = []
+
+    for conteudo in dados_json["conteudos"]:
+        identificador = (
+            id_projeto,
+            conteudo["id_conteudo"]
+        )
+
+        if identificador in ids_existentes:
+            existentes.append(conteudo)
+        else:
+            novos.append(conteudo)
+
+    return novos, existentes
+
+
 if __name__ == "__main__":
     dados = importar_json("modelo_conteudo.json")
 
     print("JSON validado com sucesso!")
     print("Projeto:", dados["projeto"]["id_projeto"])
     print("Conteúdos:", len(dados["conteudos"]))
+
