@@ -123,17 +123,17 @@ elif pagina == "Conteúdos":
             "Salvar conteúdo"
         )
 
-        if salvar:
-            dados = {
-                "id_projeto": id_projeto.strip(),
-                "id_conteudo": id_conteudo.strip(),
-                "titulo": titulo.strip(),
-                "descricao": descricao.strip(),
-                "texto": texto,
-                "status": status,
-                "csv_associado": csv_associado.strip(),
-                "fonte_texto": fonte_texto.strip(),
-            }
+    if salvar:
+        dados = {
+            "id_projeto": id_projeto.strip(),
+            "id_conteudo": id_conteudo.strip(),
+            "titulo": titulo.strip(),
+            "descricao": descricao.strip(),
+            "texto": texto,
+            "status": status,
+            "csv_associado": csv_associado.strip(),
+            "fonte_texto": fonte_texto.strip(),
+        }
 
         if not all(
             [
@@ -298,12 +298,10 @@ elif pagina == "Conteúdos":
             elif (
                 str(registro_original.get("fonte_texto", "")).strip()
                 and not nova_fonte_texto.strip()
-             ):
+            ):
                 st.error(
                     "A origem do texto já cadastrada não pode ficar vazia."
                 )
-        
-
             else:
                 dados_atualizados = {
                     "id_projeto": atual["id_projeto"],
