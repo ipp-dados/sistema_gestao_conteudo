@@ -113,20 +113,27 @@ elif pagina == "Conteúdos":
             "CSV associado (opcional)"
         )
 
+        fonte_texto = st.text_area(
+            "Origem do texto",
+            placeholder="Informe a fonte ou a procedência do conteúdo",
+            help="Registre a origem das informações utilizadas no texto."
+        )
+
         salvar = st.form_submit_button(
             "Salvar conteúdo"
         )
 
-    if salvar:
-        dados = {
-            "id_projeto": id_projeto.strip(),
-            "id_conteudo": id_conteudo.strip(),
-            "titulo": titulo.strip(),
-            "descricao": descricao.strip(),
-            "texto": texto,
-            "status": status,
-            "csv_associado": csv_associado.strip(),
-        }
+        if salvar:
+            dados = {
+                "id_projeto": id_projeto.strip(),
+                "id_conteudo": id_conteudo.strip(),
+                "titulo": titulo.strip(),
+                "descricao": descricao.strip(),
+                "texto": texto,
+                "status": status,
+                "csv_associado": csv_associado.strip(),
+                "fonte_texto": fonte_texto.strip(),
+            }
 
         if not all(
             [
@@ -134,10 +141,12 @@ elif pagina == "Conteúdos":
                 dados["id_conteudo"],
                 dados["titulo"],
                 dados["descricao"],
+                dados["fonte_texto"],
             ]
         ):
             st.error(
-                "Preencha os IDs, o título e a descrição."
+                "Preencha os IDs, o título, a descrição "
+                "e a origem do texto."
             )
         else:
             try:
@@ -266,6 +275,14 @@ elif pagina == "Conteúdos":
                 ],
             )
 
+            nova_fonte_texto = st.text_area(
+                "Editar origem do texto",
+                value=str(
+                    registro_original.get("fonte_texto", "")
+                ),
+                help="Informe a origem das informações utilizadas no texto.",
+            )
+
             atualizar = st.form_submit_button(
                 "Atualizar conteúdo"
             )
@@ -278,6 +295,15 @@ elif pagina == "Conteúdos":
                 st.error(
                     "Título e descrição são obrigatórios."
                 )
+            elif (
+                str(registro_original.get("fonte_texto", "")).strip()
+                and not nova_fonte_texto.strip()
+             ):
+                st.error(
+                    "A origem do texto já cadastrada não pode ficar vazia."
+                )
+        
+
             else:
                 dados_atualizados = {
                     "id_projeto": atual["id_projeto"],
@@ -287,6 +313,7 @@ elif pagina == "Conteúdos":
                     "texto": novo_texto,
                     "status": novo_status,
                     "csv_associado": novo_csv.strip(),
+                    "fonte_texto": nova_fonte_texto.strip(),
                 }
 
                 try:
