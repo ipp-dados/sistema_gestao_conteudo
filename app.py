@@ -2,7 +2,12 @@
 import pandas as pd
 import streamlit as st
 from leitor_csv import listar_csvs, ler_csv
-from importador_json import importar_json, verificar_duplicidades
+from importador_json import (
+    importar_json,
+    verificar_duplicidades,
+    preparar_conteudo_sheets,
+    validar_conteudos_para_gravacao,
+)
 
 from repositorio_sheets import (
     listar_conteudos,
@@ -33,9 +38,10 @@ pagina = st.sidebar.radio(
     ],
 )
 
-# Exibe mensagens após recarregar a página.
+# Exibe uma notificação após recarregar a página.
 if "mensagem_sucesso" in st.session_state:
-    st.success(st.session_state.pop("mensagem_sucesso"))
+    mensagem = st.session_state.pop("mensagem_sucesso")
+    st.toast(mensagem, icon="✅")
 
 try:
     conteudos = listar_conteudos()
@@ -443,9 +449,85 @@ elif pagina == "Importação JSON":
                     hide_index=True
                 )
 
-            st.info(
-                "Modo de pré-visualização: "
-                "nenhum conteúdo foi gravado no Google Sheets."
+            if not novos:
+                st.info("Não há conteúdos novos para importar.")
+
+            else:
+                try:
+                    validar_conteudos_para_gravacao(dados, novos)
+
+                except ValueError as erro:
+                    st.warning(
+                        "Gravação bloqueada: " + str(erro)
+                    )
+
+                else:
+                    st.write(
+                        "A importação adicionará somente os conteúdos "
+                        "novos. Os registros existentes serão preservados."
+                    )
+
+                    confirmar = st.checkbox(
+                        "Confirmo que revisei os conteúdos e autorizo "
+                        "a gravação no Google Sheets",
+                        key="confirmar_importacao_json",
+                    )
+
+                    if st.button(
+                        "Importar conteúdos novos",
+                        type="primary",
+                        disabled=not confirmar,
+                    ):
+                        try:
+                            registros_atuais = listar_conteudos()
+
+                            novos_atuais, _ = verificar_duplicidades(
+                                dados,
+                                registros_atuais,
+                            )
+
+                            if not novos_atuais:
+                                st.info(
+                                    "Todos os conteúdos já estão cadastrados. "
+                                    "Nenhum registro foi criado."
+                                )
+
+                            else:
+                                validar_conteudos_para_gravacao(
+                                    dados,
+                                    novos_atuais,
+                                )
+
+                                id_projeto = dados["projeto"]["id_projeto"]
+                                importados = 0
+
+                                for conteudo in novos_atuais:
+                                    registro = preparar_conteudo_sheets(
+                                        id_projeto,
+                                        conteudo,
+                                    )
+
+                                    cadastrar_conteudo(registro)
+                                    importados += 1
+
+                                st.session_state["mensagem_sucesso"] = (
+                                    f"{importados} conteúdo(s) importado(s) "
+                                    "para o Google Sheets!"
+                                )
+
+                                st.rerun()
+
+                        except Exception as erro:
+                            st.error(
+                                "A importação foi interrompida: "
+                                f"{erro}. Confira os registros na planilha "
+                                "antes de tentar novamente; alguns podem "
+                                "ter sido gravados."
+                            )
+
+            st.caption(
+                "A pré-visualização não altera a planilha. "
+                "A gravação só ocorre após confirmação."
             )
 
         except (ValueError, OSError, UnicodeError) as erro:
