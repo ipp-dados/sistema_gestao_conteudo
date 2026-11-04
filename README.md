@@ -196,27 +196,33 @@ A página de revisões permite visualizar os conteúdos classificados como **Em 
 
 Nesta etapa, o controle utiliza o status registrado na planilha. Ainda não existe um fluxo completo de aprovação com identificação individual de revisores e histórico detalhado de decisões.
 
-### 6.6. Consulta de indicadores
 
-A página de indicadores permite selecionar e visualizar arquivos CSV disponibilizados ao sistema.
+### 6.6. Consulta e associação de indicadores
 
-A interface apresenta os dados tabulares e a quantidade de registros encontrados.
+A página de indicadores permite selecionar e visualizar arquivos CSV disponíveis no sistema, apresentando seus dados tabulares e a quantidade de registros.
 
-A integração completa com o catálogo de indicadores e com os processos de produção das bases ainda está em desenvolvimento.
+Nos formulários de cadastro e edição de conteúdos, o campo `csv_associado` utiliza uma lista de seleção preenchida automaticamente com os arquivos CSV disponíveis.
+
+O usuário pode selecionar um arquivo ou manter o conteúdo sem associação. Na edição, o sistema também preserva a referência anteriormente cadastrada.
+
+A associação é armazenada no campo `csv_associado` do Google Sheets.
+
+A funcionalidade foi validada por meio do cadastro e da edição de conteúdos de teste, com confirmação da gravação dos nomes dos arquivos na planilha.
+
+Nesta versão, a associação corresponde à referência ao arquivo CSV. A integração com um catálogo institucional completo de indicadores ainda não foi implementada.
+
 
 ### 6.7. Exportação CSV
 
-Os registros disponíveis no Google Sheets podem ser exportados em formato CSV.
+A aplicação permite exportar exclusivamente os conteúdos que possuem status `Aprovado` no Google Sheets.
 
-O arquivo utiliza codificação UTF-8 com BOM, facilitando sua abertura em ferramentas de planilha que reconhecem essa codificação.
+A página de exportação apresenta a quantidade de conteúdos aprovados, disponibiliza uma pré-visualização dos registros e permite baixar o arquivo `conteudos_aprovados.csv`.
 
-A exportação permite consultar os registros fora da aplicação e utilizá-los em outras etapas de trabalho.
+O arquivo utiliza codificação UTF-8 com BOM e mantém os campos da estrutura de conteúdos, incluindo a identificação do projeto, o status, o CSV associado e a origem do texto.
 
-## 7. Importação de conteúdos JSON
+A funcionalidade foi validada com dois registros aprovados, confirmando que conteúdos em outros estados não são incluídos na exportação.
 
-A importação JSON foi desenvolvida para permitir a entrada de conteúdos previamente estruturados, reduzindo a necessidade de cadastramento individual pela interface.
-
-O processo possui etapas de validação antes da gravação.
+A aprovação, nesta versão, corresponde ao status registrado na planilha e não representa ainda um processo institucional de autorização para publicação.
 
 ### 7.1. Estrutura esperada
 
@@ -399,11 +405,18 @@ A aplicação depende de conexão com a planilha para carregar os conteúdos.
 
 O projeto adota cuidados básicos para reduzir riscos durante o desenvolvimento e os testes.
 
+
 ### Autenticação
 
-O acesso à planilha utiliza OAuth 2.0 e depende de autorização válida.
+O acesso à planilha Google Sheets utiliza OAuth 2.0 e depende de uma autorização válida.
 
-Os arquivos `credentials.json`, `token.json` e outros tokens locais não devem ser incluídos no repositório Git.
+Os arquivos `credentials.json`, `token.json` e outros arquivos locais de autenticação não devem ser incluídos no repositório Git. O `.gitignore` contém regras para impedir seu versionamento acidental.
+
+Durante os testes, foi necessário renovar a autorização de acesso ao Google Sheets. Dependendo da configuração do aplicativo OAuth e da validade das credenciais, o sistema poderá solicitar uma nova autenticação.
+
+Para uma futura utilização institucional, será necessário avaliar uma estratégia de autenticação centralizada, com armazenamento seguro das credenciais e controle de acesso dos usuários. Uma das alternativas a estudar é a utilização de uma conta de serviço do Google, conforme as políticas de segurança e infraestrutura do IPP.
+
+A autenticação atual atende à validação do protótipo, mas ainda não representa uma solução definitiva para utilização em produção.
 
 ### Validação de entrada
 
@@ -461,35 +474,54 @@ Essas limitações orientam as próximas etapas de desenvolvimento.
 
 ## 13. Próximas etapas
 
-A evolução do projeto poderá contemplar:
+Com as funcionalidades essenciais do MVP implementadas, as próximas atividades deverão priorizar a estabilidade, a rastreabilidade e a adequação do sistema ao uso institucional.
 
-1. **Aprimoramento dos formulários:** incorporar a consulta e edição explícita da origem dos textos.
-2. **Revisão e aprovação:** desenvolver um fluxo mais completo de acompanhamento das revisões.
-3. **Histórico de alterações:** registrar autoria, datas e mudanças realizadas nos conteúdos.
-4. **Validações automatizadas:** ampliar a cobertura de testes dos módulos Python.
-5. **Integração com indicadores:** organizar as relações entre conteúdos, arquivos CSV e respectivas fontes.
-6. **Controle de acesso:** avaliar requisitos de autenticação e autorização por perfil.
-7. **Persistência institucional:** estudar a migração do armazenamento para uma solução de banco de dados adequada.
-8. **Validação com a equipe:** avaliar a usabilidade, os requisitos e a adequação do sistema ao fluxo de trabalho do IPP.
+1. **Gestão de revisões e aprovações:** implementar identificação dos responsáveis pelas revisões, registro das decisões e regras de transição entre os status.
+2. **Histórico de alterações:** registrar autoria, datas e versões anteriores dos conteúdos.
+3. **Validações e testes automatizados:** ampliar os testes de cadastro, edição, importação JSON, associação de indicadores e exportação CSV.
+4. **Integração com indicadores:** evoluir a associação de arquivos CSV para um catálogo estruturado, com identificação das fontes e validação das referências.
+5. **Autenticação e controle de acesso:** avaliar uma solução centralizada de autenticação, permissões por perfil e armazenamento seguro das credenciais.
+6. **Persistência institucional:** estudar a substituição do Google Sheets por uma solução de armazenamento adequada ao uso colaborativo e às necessidades de integridade dos dados.
+7. **Usabilidade:** avaliar a interface com os usuários e aprimorar os formulários, filtros e mecanismos de consulta.
+8. **Validação institucional:** apresentar o MVP à equipe do IPP, registrar as observações e definir as prioridades de evolução.
+
+As próximas implementações deverão considerar os requisitos do projeto, a infraestrutura disponível e as orientações da equipe responsável.
 
 As prioridades deverão ser definidas conforme as necessidades do projeto e as orientações da equipe.
 
 ## 14. Situação do desenvolvimento
 
-**Estado atual:** protótipo funcional em desenvolvimento.
+**Estado atual:** MVP funcional em ambiente de testes, em processo de validação para apresentação à equipe do Instituto Pereira Passos (IPP).
 
-As operações de cadastro, consulta, edição, exportação e importação JSON já foram implementadas e exercitadas no ambiente de testes.
+O sistema possui as seguintes funcionalidades implementadas:
 
-A integração com o Google Sheets está operacional no ambiente configurado, incluindo os testes de preservação de registros e de origem textual.
+- Painel inicial com indicadores de acompanhamento dos conteúdos.
+- Cadastro, consulta, pesquisa e edição de conteúdos.
+- Registro e preservação da origem dos textos (`fonte_texto`).
+- Integração com o Google Sheets para leitura e atualização dos registros.
+- Consulta e visualização de arquivos CSV de indicadores.
+- Associação de arquivos CSV aos conteúdos por meio de listas de seleção no cadastro e na edição.
+- Controle básico dos status Rascunho, Em revisão e Aprovado.
+- Exportação CSV restrita aos conteúdos com status Aprovado.
+- Importação de arquivos JSON com validação, pré-visualização e identificação de registros duplicados.
 
-As próximas atividades concentram-se no aperfeiçoamento da gestão de revisões, na ampliação dos testes e na avaliação dos requisitos para utilização colaborativa.
+### Validações realizadas
 
----
+Em 04/11/2026, foram realizados testes funcionais no ambiente do IPP, incluindo:
 
-**Projeto:** Sistema de Gestão de Conteúdo — Primeira Infância
+- Restabelecimento da autenticação e conexão com o Google Sheets.
+- Cadastro e edição de conteúdos com associação de indicadores CSV.
+- Confirmação da persistência dos registros na planilha.
+- Alteração de status de Rascunho para Em revisão e, posteriormente, para Aprovado.
+- Confirmação da identificação de dois conteúdos aprovados na exportação.
+- Identificação de um registro já cadastrado durante a validação de importação JSON, sem nova gravação.
 
-**Instituição de referência:** Instituto Municipal de Urbanismo Pereira Passos (IPP)
+### Pendências para conclusão da validação do MVP
 
-**Desenvolvimento:** Protótipo desenvolvido no contexto das atividades de estágio em tecnologia e dados
+- Realizar um teste adicional de importação de um arquivo JSON com conteúdo novo.
+- Executar uma verificação final do sistema após reinicialização.
+- Consolidar a documentação e preparar a demonstração das funcionalidades.
 
-**Repositório:** https://github.com/waleskamarques-eng/sistema_gestao_conteudo
+O MVP utiliza uma planilha de testes e ainda não possui autenticação própria de usuários, histórico completo de revisões ou infraestrutura de produção.
+
+A próxima etapa será apresentar o protótipo à equipe, coletar observações e definir os requisitos para sua evolução.
