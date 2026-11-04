@@ -109,8 +109,14 @@ elif pagina == "Conteúdos":
             ["Rascunho", "Em revisão", "Aprovado"],
         )
 
-        csv_associado = st.text_input(
-            "CSV associado (opcional)"
+        opcoes_csv_cadastro = [""] + listar_csvs()
+
+        csv_associado = st.selectbox(
+            "CSV associado (opcional)",
+            options=opcoes_csv_cadastro,
+            format_func=lambda nome: (
+                "Nenhum CSV associado" if nome == "" else nome
+            ),
         )
 
         fonte_texto = st.text_area(
@@ -268,11 +274,22 @@ elif pagina == "Conteúdos":
                 ),
             )
 
-            novo_csv = st.text_input(
+            csv_atual = str(
+                registro_original.get("csv_associado", "") or ""
+            ).strip()
+
+            opcoes_csv = [""] + listar_csvs()
+
+            if csv_atual and csv_atual not in opcoes_csv:
+                opcoes_csv.append(csv_atual)
+
+            novo_csv = st.selectbox(
                 "Editar CSV associado",
-                value=registro_original[
-                    "csv_associado"
-                ],
+                options=opcoes_csv,
+                index=opcoes_csv.index(csv_atual),
+                format_func=lambda nome: (
+                    "Nenhum CSV associado" if nome == "" else nome
+                ),
             )
 
             nova_fonte_texto = st.text_area(
@@ -585,20 +602,37 @@ elif pagina == "Revisões":
 
 
 elif pagina == "Exportação CSV":
-    st.subheader("Exportação de conteúdos")
+    st.subheader("Exportação de conteúdos aprovados")
 
-    if conteudos:
-        df = pd.DataFrame(conteudos)
+    aprovados = [
+        conteudo
+        for conteudo in conteudos
+        if str(conteudo.get("status", "")).strip().casefold()
+        == "aprovado"
+    ]
+
+    st.metric(
+        "Conteúdos aprovados disponíveis",
+        len(aprovados)
+    )
+
+    if aprovados:
+        df = pd.DataFrame(aprovados)
+
+        st.dataframe(
+            df,
+            use_container_width=True,
+            hide_index=True,
+        )
 
         st.download_button(
-            "Baixar CSV",
-            data=df.to_csv(
-                index=False
-            ).encode("utf-8-sig"),
-            file_name="conteudos_teste.csv",
+            "Baixar conteúdos aprovados (CSV)",
+            data=df.to_csv(index=False).encode("utf-8-sig"),
+            file_name="conteudos_aprovados.csv",
             mime="text/csv",
         )
+
     else:
         st.info(
-            "Nenhum conteúdo disponível para exportação."
+            "Nenhum conteúdo aprovado disponível para exportação."
         )

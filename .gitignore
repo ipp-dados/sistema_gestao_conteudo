@@ -18,3 +18,7 @@ __pycache__/
 *.logtoken_antigo.json
 token_antigo.json 
 teste_importacao_002.json
+
+# Credenciais e tokens de autenticação do Google
+token_antigo.json
+token_expirado_*.json
