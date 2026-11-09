@@ -1,6 +1,7 @@
 
 import pandas as pd
 import streamlit as st
+
 from leitor_csv import listar_csvs, ler_csv
 from importador_json import (
     importar_json,
@@ -8,12 +9,12 @@ from importador_json import (
     preparar_conteudo_sheets,
     validar_conteudos_para_gravacao,
 )
-
 from repositorio_sheets import (
     listar_conteudos,
     cadastrar_conteudo,
     atualizar_conteudo,
 )
+
 
 st.set_page_config(
     page_title="Gestão de Conteúdo | Primeira Infância",
@@ -122,12 +123,10 @@ elif pagina == "Conteúdos":
         fonte_texto = st.text_area(
             "Origem do texto",
             placeholder="Informe a fonte ou a procedência do conteúdo",
-            help="Registre a origem das informações utilizadas no texto."
+            help="Registre a origem das informações utilizadas no texto.",
         )
 
-        salvar = st.form_submit_button(
-            "Salvar conteúdo"
-        )
+        salvar = st.form_submit_button("Salvar conteúdo")
 
     if salvar:
         dados = {
@@ -161,7 +160,6 @@ elif pagina == "Conteúdos":
                 st.session_state["mensagem_sucesso"] = (
                     "Conteúdo salvo no Google Sheets!"
                 )
-
                 st.rerun()
 
             except Exception as erro:
@@ -186,8 +184,27 @@ elif pagina == "Conteúdos":
             ).lower()
         ]
 
+        # Formata a data apenas para exibição.
+        df_consulta = pd.DataFrame(filtrados)
+
+        if (
+            not df_consulta.empty
+            and "atualizado_em" in df_consulta.columns
+        ):
+            datas = pd.to_datetime(
+                df_consulta["atualizado_em"],
+                errors="coerce",
+                utc=True,
+            )
+
+            df_consulta["atualizado_em"] = (
+                datas.dt.tz_convert("America/Sao_Paulo")
+                .dt.strftime("%d/%m/%Y %H:%M")
+                .fillna("")
+            )
+
         st.dataframe(
-            pd.DataFrame(filtrados),
+            df_consulta,
             use_container_width=True,
             hide_index=True,
         )
@@ -234,9 +251,7 @@ elif pagina == "Conteúdos":
             st.session_state[chave_original]
         )
 
-        with st.form(
-            f"edicao_{chave_registro}"
-        ):
+        with st.form(f"edicao_{chave_registro}"):
             novo_titulo = st.text_input(
                 "Editar título",
                 value=registro_original["titulo"],
@@ -269,9 +284,7 @@ elif pagina == "Conteúdos":
             novo_status = st.selectbox(
                 "Editar status",
                 status_opcoes,
-                index=status_opcoes.index(
-                    status_atual
-                ),
+                index=status_opcoes.index(status_atual),
             )
 
             csv_atual = str(
@@ -297,7 +310,10 @@ elif pagina == "Conteúdos":
                 value=str(
                     registro_original.get("fonte_texto", "")
                 ),
-                help="Informe a origem das informações utilizadas no texto.",
+                help=(
+                    "Informe a origem das informações "
+                    "utilizadas no texto."
+                ),
             )
 
             atualizar = st.form_submit_button(
@@ -312,13 +328,18 @@ elif pagina == "Conteúdos":
                 st.error(
                     "Título e descrição são obrigatórios."
                 )
+
             elif (
-                str(registro_original.get("fonte_texto", "")).strip()
+                str(
+                    registro_original.get("fonte_texto", "")
+                ).strip()
                 and not nova_fonte_texto.strip()
             ):
                 st.error(
-                    "A origem do texto já cadastrada não pode ficar vazia."
+                    "A origem do texto já cadastrada "
+                    "não pode ficar vazia."
                 )
+
             else:
                 dados_atualizados = {
                     "id_projeto": atual["id_projeto"],
@@ -338,17 +359,16 @@ elif pagina == "Conteúdos":
                     )
 
                     st.session_state.pop(
-                        chave_original, None
+                        chave_original,
+                        None,
                     )
                     st.session_state.pop(
-                        "registro_selecionado", None
+                        "registro_selecionado",
+                        None,
                     )
 
-                    st.session_state[
-                        "mensagem_sucesso"
-                    ] = (
-                        "Conteúdo atualizado "
-                        "no Google Sheets!"
+                    st.session_state["mensagem_sucesso"] = (
+                        "Conteúdo atualizado no Google Sheets!"
                     )
 
                     st.rerun()
@@ -360,16 +380,17 @@ elif pagina == "Conteúdos":
                     st.error(
                         f"Erro ao atualizar: {erro}"
                     )
+
     else:
-        st.info(
-            "Nenhum conteúdo encontrado."
-        )
+        st.info("Nenhum conteúdo encontrado.")
 
 
 elif pagina == "Indicadores":
     st.subheader("Indicadores da Primeira Infância")
 
-    st.write("Consulte os CSVs gerados pelos pipelines do projeto.")
+    st.write(
+        "Consulte os CSVs gerados pelos pipelines do projeto."
+    )
 
     try:
         arquivos = listar_csvs()
@@ -377,19 +398,23 @@ elif pagina == "Indicadores":
         if arquivos:
             arquivo_selecionado = st.selectbox(
                 "Selecione um arquivo CSV:",
-                arquivos
+                arquivos,
             )
 
             dados = ler_csv(arquivo_selecionado)
 
-            st.success(f"Arquivo carregado: {arquivo_selecionado}")
+            st.success(
+                f"Arquivo carregado: {arquivo_selecionado}"
+            )
 
-            st.write(f"Total de registros: {len(dados)}")
+            st.write(
+                f"Total de registros: {len(dados)}"
+            )
 
             st.dataframe(
                 dados,
                 width="stretch",
-                hide_index=True
+                hide_index=True,
             )
         else:
             st.info("Nenhum CSV encontrado.")
@@ -399,9 +424,11 @@ elif pagina == "Indicadores":
         ValueError,
         OSError,
         UnicodeError,
-        pd.errors.ParserError
+        pd.errors.ParserError,
     ) as erro:
-        st.error(f"Não foi possível carregar os CSVs: {erro}")
+        st.error(
+            f"Não foi possível carregar os CSVs: {erro}"
+        )
 
 
 elif pagina == "Importação JSON":
@@ -414,7 +441,7 @@ elif pagina == "Importação JSON":
 
     arquivo_json = st.file_uploader(
         "Selecione um arquivo JSON",
-        type=["json"]
+        type=["json"],
     )
 
     if arquivo_json is not None:
@@ -426,7 +453,7 @@ elif pagina == "Importação JSON":
         try:
             with tempfile.NamedTemporaryFile(
                 suffix=".json",
-                delete=False
+                delete=False,
             ) as arquivo:
                 arquivo.write(arquivo_json.getvalue())
                 caminho_temporario = Path(arquivo.name)
@@ -437,46 +464,47 @@ elif pagina == "Importação JSON":
 
             st.write(
                 "Projeto:",
-                dados["projeto"]["id_projeto"]
+                dados["projeto"]["id_projeto"],
             )
 
             st.write(
                 "Total de conteúdos:",
-                len(dados["conteudos"])
+                len(dados["conteudos"]),
             )
 
             st.dataframe(
                 pd.DataFrame(dados["conteudos"]),
                 width="stretch",
-                hide_index=True
+                hide_index=True,
             )
 
-            # Compara os conteúdos do JSON com o Google Sheets.
+            # Compara o JSON com o Google Sheets.
             st.subheader("Verificação de duplicidades")
 
             novos, existentes = verificar_duplicidades(
                 dados,
-                conteudos
+                conteudos,
             )
 
             col1, col2 = st.columns(2)
 
             col1.metric(
                 "Conteúdos novos",
-                len(novos)
+                len(novos),
             )
 
             col2.metric(
                 "Já cadastrados",
-                len(existentes)
+                len(existentes),
             )
 
             if novos:
                 st.write("Conteúdos novos:")
+
                 st.dataframe(
                     pd.DataFrame(novos),
                     width="stretch",
-                    hide_index=True
+                    hide_index=True,
                 )
 
             if existentes:
@@ -488,15 +516,20 @@ elif pagina == "Importação JSON":
                 st.dataframe(
                     pd.DataFrame(existentes),
                     width="stretch",
-                    hide_index=True
+                    hide_index=True,
                 )
 
             if not novos:
-                st.info("Não há conteúdos novos para importar.")
+                st.info(
+                    "Não há conteúdos novos para importar."
+                )
 
             else:
                 try:
-                    validar_conteudos_para_gravacao(dados, novos)
+                    validar_conteudos_para_gravacao(
+                        dados,
+                        novos,
+                    )
 
                 except ValueError as erro:
                     st.warning(
@@ -530,8 +563,8 @@ elif pagina == "Importação JSON":
 
                             if not novos_atuais:
                                 st.info(
-                                    "Todos os conteúdos já estão cadastrados. "
-                                    "Nenhum registro foi criado."
+                                    "Todos os conteúdos já estão "
+                                    "cadastrados. Nenhum registro foi criado."
                                 )
 
                             else:
@@ -540,7 +573,10 @@ elif pagina == "Importação JSON":
                                     novos_atuais,
                                 )
 
-                                id_projeto = dados["projeto"]["id_projeto"]
+                                id_projeto = dados[
+                                    "projeto"
+                                ]["id_projeto"]
+
                                 importados = 0
 
                                 for conteudo in novos_atuais:
@@ -552,9 +588,11 @@ elif pagina == "Importação JSON":
                                     cadastrar_conteudo(registro)
                                     importados += 1
 
-                                st.session_state["mensagem_sucesso"] = (
-                                    f"{importados} conteúdo(s) importado(s) "
-                                    "para o Google Sheets!"
+                                st.session_state[
+                                    "mensagem_sucesso"
+                                ] = (
+                                    f"{importados} conteúdo(s) "
+                                    "importado(s) para o Google Sheets!"
                                 )
 
                                 st.rerun()
@@ -572,12 +610,20 @@ elif pagina == "Importação JSON":
                 "A gravação só ocorre após confirmação."
             )
 
-        except (ValueError, OSError, UnicodeError) as erro:
-            st.error(f"Erro na importação: {erro}")
+        except (
+            ValueError,
+            OSError,
+            UnicodeError,
+        ) as erro:
+            st.error(
+                f"Erro na importação: {erro}"
+            )
 
         finally:
             if caminho_temporario is not None:
-                caminho_temporario.unlink(missing_ok=True)
+                caminho_temporario.unlink(
+                    missing_ok=True
+                )
 
 
 elif pagina == "Revisões":
@@ -607,13 +653,14 @@ elif pagina == "Exportação CSV":
     aprovados = [
         conteudo
         for conteudo in conteudos
-        if str(conteudo.get("status", "")).strip().casefold()
-        == "aprovado"
+        if str(
+            conteudo.get("status", "")
+        ).strip().casefold() == "aprovado"
     ]
 
     st.metric(
         "Conteúdos aprovados disponíveis",
-        len(aprovados)
+        len(aprovados),
     )
 
     if aprovados:
@@ -627,7 +674,9 @@ elif pagina == "Exportação CSV":
 
         st.download_button(
             "Baixar conteúdos aprovados (CSV)",
-            data=df.to_csv(index=False).encode("utf-8-sig"),
+            data=df.to_csv(
+                index=False
+            ).encode("utf-8-sig"),
             file_name="conteudos_aprovados.csv",
             mime="text/csv",
         )
