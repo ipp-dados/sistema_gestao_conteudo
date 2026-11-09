@@ -22,10 +22,38 @@ st.set_page_config(
     layout="wide",
 )
 
-st.title("Sistema de Gestão de Conteúdo")
-st.caption(
-    "Projeto Primeira Infância | Protótipo com Google Sheets"
+# Identidade visual do protótipo. Não altera a lógica de dados.
+st.markdown(
+    """
+    <style>
+      .block-container {padding-top: 1.8rem; padding-bottom: 2.5rem; max-width: 1250px;}
+      h1, h2, h3 {letter-spacing: -0.025em;}
+      h1 {color: #17365d; font-weight: 750;}
+      [data-testid="stSidebar"] {background: #f1f6fb;}
+      [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {color: #17365d;}
+      [data-testid="stMetric"] {
+        background: #ffffff;
+        border: 1px solid #dbe6f1;
+        border-radius: 14px;
+        padding: 1.1rem 1.25rem;
+        box-shadow: 0 3px 12px rgba(22, 54, 93, 0.05);
+      }
+      [data-testid="stMetricLabel"] {color: #4e647c;}
+      [data-testid="stMetricValue"] {color: #17365d;}
+      div.stButton > button[kind="primary"],
+      div.stFormSubmitButton > button[kind="primary"] {border-radius: 9px;}
+      [data-testid="stDataFrame"] {border-radius: 10px; overflow: hidden;}
+    </style>
+    """,
+    unsafe_allow_html=True,
 )
+
+st.sidebar.markdown("### Primeira Infância")
+st.sidebar.caption("Gestão editorial de conteúdos")
+st.sidebar.divider()
+
+st.title("Sistema de Gestão de Conteúdo")
+st.caption("PRIMEIRA INFÂNCIA  •  Ambiente de demonstração  •  Google Sheets")
 
 pagina = st.sidebar.radio(
     "Navegação",
@@ -54,7 +82,13 @@ except Exception as erro:
 
 
 if pagina == "Início":
-    st.subheader("Painel inicial")
+    st.subheader("Visão geral")
+    st.write(
+        "Acompanhe o andamento dos conteúdos editoriais do projeto, "
+        "desde o cadastro até a aprovação."
+    )
+    st.divider()
+    st.markdown("#### Resumo dos conteúdos")
 
     col1, col2, col3 = st.columns(3)
 
@@ -80,6 +114,17 @@ if pagina == "Início":
     )
 
     st.success("Sistema conectado ao Google Sheets.")
+    st.markdown("#### Como funciona")
+    st.write(
+        "**1. Cadastrar** um conteúdo e associar um CSV  →  "
+        "**2. Revisar** o texto  →  "
+        "**3. Aprovar** o registro  →  "
+        "**4. Exportar** os conteúdos aprovados."
+    )
+    st.caption(
+        "Protótipo em evolução: login individual, permissões e histórico "
+        "de alterações ainda não estão disponíveis."
+    )
 
 
 elif pagina == "Conteúdos":
