@@ -22,6 +22,32 @@ st.set_page_config(
     layout="wide",
 )
 
+# Autenticação Google e controle de acesso
+USUARIOS_AUTORIZADOS = {
+    "waleskapmarques@gmail.com",
+    "leonardoaucar@gmail.com",
+}
+
+if not st.user.is_logged_in:
+    st.title("Sistema de Gestão de Conteúdo")
+    st.info("Entre com sua conta Google para acessar o sistema.")
+
+    if st.button("Entrar com Google", type="primary"):
+        st.login("google")
+
+    st.stop()
+
+email_usuario = st.user.get("email", "").strip().lower()
+
+if email_usuario not in USUARIOS_AUTORIZADOS:
+    st.error("Sua conta Google não está autorizada a acessar este sistema.")
+
+    if st.button("Sair da conta Google"):
+        st.logout()
+
+    st.stop()
+
+
 # Identidade visual do protótipo. Não altera a lógica de dados.
 st.markdown(
     """

@@ -2,8 +2,10 @@
 from pathlib import Path
 
 import gspread
+import streamlit as st
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
+from google.oauth2.service_account import Credentials as ServiceAccountCredentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 
 PASTA_PROJETO = Path(__file__).resolve().parent
@@ -15,7 +17,17 @@ ARQUIVO_CREDENCIAIS = PASTA_PROJETO / "credentials.json"
 ARQUIVO_TOKEN = PASTA_PROJETO / "token.json"
 
 
-def conectar_planilha():
+def obter_credenciais():
+    # No servidor, utiliza a conta de serviço.
+    if "gcp_service_account" in st.secrets:
+        dados_conta = dict(st.secrets["gcp_service_account"])
+
+        return ServiceAccountCredentials.from_service_account_info(
+            dados_conta,
+            scopes=SCOPES,
+        )
+
+    # No computador local, mantém a autenticação atual.
     credenciais = None
 
     if ARQUIVO_TOKEN.exists():
@@ -35,6 +47,12 @@ def conectar_planilha():
         ARQUIVO_TOKEN.write_text(
             credenciais.to_json(), encoding="utf-8"
         )
+
+    return credenciais
+
+
+def conectar_planilha():
+    credenciais = obter_credenciais()
 
     cliente = gspread.authorize(credenciais)
     planilha = cliente.open_by_key(SPREADSHEET_ID)

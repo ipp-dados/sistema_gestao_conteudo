@@ -15,7 +15,7 @@ __pycache__/
 *.pyc
 
 # Arquivos temporários
-*.logtoken_antigo.json
+*.log
 token_antigo.json 
 teste_importacao_002.json
 
