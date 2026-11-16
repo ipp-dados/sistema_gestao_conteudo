@@ -156,6 +156,33 @@ if pagina == "Início":
 elif pagina == "Conteúdos":
     st.subheader("Cadastro de conteúdos")
 
+    # Upload fora do formulário para mostrar a prévia imediatamente.
+    arquivo_csv_upload = st.file_uploader(
+        "Enviar CSV para teste (opcional)",
+        type=["csv"],
+        help="O arquivo fica disponível apenas nesta sessão; não é armazenado na nuvem.",
+        key="upload_csv_cadastro",
+    )
+
+    nome_csv_upload = ""
+    if arquivo_csv_upload is not None:
+        try:
+            arquivo_csv_upload.seek(0)
+            df_upload = pd.read_csv(arquivo_csv_upload)
+            if df_upload.empty:
+                st.warning("O CSV não contém registros e não será associado.")
+            else:
+                nome_csv_upload = arquivo_csv_upload.name
+                st.success(f"CSV carregado: {nome_csv_upload}")
+                st.write(f"Total de registros: {len(df_upload)}")
+                st.dataframe(df_upload.head(10), hide_index=True)
+                st.warning(
+                    "Teste: ao salvar, apenas o nome do CSV será registrado no "
+                    "Google Sheets. O arquivo não ficará armazenado no Streamlit Cloud."
+                )
+        except (ValueError, UnicodeError, pd.errors.ParserError, OSError) as erro:
+            st.error(f"Erro ao ler CSV: {erro}")
+
     with st.form("cadastro", clear_on_submit=True):
         id_projeto = st.text_input(
             "ID do projeto",
@@ -182,10 +209,16 @@ elif pagina == "Conteúdos":
         )
 
         opcoes_csv_cadastro = [""] + listar_csvs()
+        if nome_csv_upload and nome_csv_upload not in opcoes_csv_cadastro:
+            opcoes_csv_cadastro.append(nome_csv_upload)
 
         csv_associado = st.selectbox(
             "CSV associado (opcional)",
             options=opcoes_csv_cadastro,
+            index=(
+                opcoes_csv_cadastro.index(nome_csv_upload)
+                if nome_csv_upload else 0
+            ),
             format_func=lambda nome: (
                 "Nenhum CSV associado" if nome == "" else nome
             ),
