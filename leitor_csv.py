@@ -1,3 +1,4 @@
+
 from pathlib import Path
 import pandas as pd
 
@@ -10,9 +11,9 @@ PASTA_CSV = (
 
 
 def listar_csvs():
-    """Lista os arquivos CSV disponíveis."""
+    """Lista os CSVs disponíveis sem interromper o aplicativo."""
     if not PASTA_CSV.is_dir():
-        raise FileNotFoundError(f"Pasta não encontrada: {PASTA_CSV}")
+        return []
 
     return sorted(arquivo.name for arquivo in PASTA_CSV.glob("*.csv"))
 
