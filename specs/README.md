@@ -52,7 +52,7 @@ Cada pasta contém quatro arquivos, criados a partir de [`_templates/`](_templat
 4. **As branches `spec/...` são temporárias.** Cada uma é criada a partir da `planning` atualizada, gera um único Pull Request para `main` e é apagada depois do merge (`git branch -d` e `git push origin --delete`).
 5. **`initial_setup`** (configuração local e estrutura de `specs/`) entra em `main` por um único Pull Request e é apagada depois.
 6. **`feature/google-drive`** (Waleska) continua como está, por enquanto. A forma de trazê-la para o fluxo de especificações será combinada com a responsável.
-7. **Correções pequenas:** a definir pela equipe se exigem especificação ou se podem usar uma branch `fix/descricao` com Pull Request.
+7. **Correções pequenas** (erro pontual, sem funcionalidade nova nem mudança de requisito) não exigem especificação. Usam uma branch `fix/descricao`, criada a partir de `main`, com Pull Request para `main` que descreve o problema e como a correção foi verificada. Depois do merge, a branch é apagada e a `planning` é atualizada com `main`. Se a correção mudar um requisito ou um critério de aceitação, ela vira uma especificação.
 
 ## Fluxo
 

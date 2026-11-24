@@ -10,7 +10,7 @@ Regras que toda especificação, todo plano e todo código devem respeitar. Um p
 
 ## 2. Processo de desenvolvimento
 
-1. Nenhuma mudança de comportamento sem especificação. Toda funcionalidade ou correção relevante tem uma pasta em `specs/` e uma branch `spec/AAAA-MM-DD_nome` (ver [`README.md`](README.md)).
+1. Nenhuma mudança de comportamento sem especificação. Toda funcionalidade ou correção relevante tem uma pasta em `specs/` e uma branch `spec/AAAA-MM-DD_nome` (ver [`README.md`](README.md)). Exceção: correções pequenas, que não criam funcionalidade nem mudam requisitos, usam uma branch `fix/descricao` com Pull Request, sem especificação.
 2. O `spec.md` é aprovado antes do `plan.md`, e o `plan.md` antes da implementação.
 3. Nada entra em `main` sem Pull Request e sem `validation.md` preenchido.
 4. Não se fazem commits diretamente em `main`.
@@ -69,3 +69,4 @@ Regras que toda especificação, todo plano e todo código devem respeitar. Um p
 | Data | Regra | Mudança | Motivo | Aprovada por |
 |---|---|---|---|---|
 | 2026-11-24 | 9.1–9.3 | Inclusão da seção "Agentes de IA" | Evitar suposições dos agentes e reduzir interrupções | leoaucar |
+| 2026-11-24 | 2.1 | Exceção para correções pequenas em branches `fix/` | Evitar especificações para correções pontuais | leoaucar |
