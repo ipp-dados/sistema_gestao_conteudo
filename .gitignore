@@ -1,24 +1,43 @@
-# Credenciais e autenticação
+# Credenciais e autenticação Google
 credentials.json
 client_secret*.json
 token.json
+token_*.json
 token.pickle
+
+# Configurações privadas do Streamlit
 .streamlit/secrets.toml
+
+# Variáveis de ambiente
+.env
+.env.*
+!.env.example
+
+# Ambiente Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
 
 # Dados locais de teste
 conteudos_teste.json
+teste_importacao_*.json
+dados_locais/
 
-# Ambiente Python
-.env
-.venv/
-__pycache__/
-*.pyc
+venv*
 
-# Arquivos temporários
+# Arquivos temporários e backups
 *.log
-token_antigo.json 
-teste_importacao_002.json
+*.bak
+*.tmp
 
-# Credenciais e tokens de autenticação do Google
-token_antigo.json
-token_expirado_*.json
+# Configurações de editores e sistema operacional
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Modelos de configuração versionados
+!.streamlit/secrets.toml.example
+!credentials.json.example

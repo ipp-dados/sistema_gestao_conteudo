@@ -15,12 +15,12 @@ from repositorio_sheets import (
     atualizar_conteudo,
 )
 
-
 st.set_page_config(
-    page_title="Gestão de Conteúdo | Primeira Infância",
-    page_icon="📚",
+    page_title="Sistema de Gestão de Conteúdo",
+    page_icon="📊",
     layout="wide",
 )
+
 
 # Autenticação Google e controle de acesso
 USUARIOS_AUTORIZADOS = {
@@ -28,16 +28,37 @@ USUARIOS_AUTORIZADOS = {
     "leonardoaucar@gmail.com",
 }
 
-if not st.user.is_logged_in:
-    st.title("Sistema de Gestão de Conteúdo")
-    st.info("Entre com sua conta Google para acessar o sistema.")
+def _email_dev_local():
+    """Retorna o e-mail de desenvolvimento se o bypass local estiver ativo.
 
-    if st.button("Entrar com Google", type="primary"):
-        st.login("google")
+    Ativado apenas com [dev] bypass_login = true no secrets.toml local.
+    Nunca configure isso nos Secrets do Streamlit Cloud.
+    """
+    try:
+        dev = st.secrets.get("dev", {})
+    except Exception:
+        return None
+    if dev.get("bypass_login") is True:
+        return str(dev.get("email", "")).strip().lower() or None
+    return None
 
-    st.stop()
 
-email_usuario = st.user.get("email", "").strip().lower()
+email_dev = _email_dev_local()
+
+if email_dev:
+    email_usuario = email_dev
+    st.sidebar.warning(f"Modo dev local: login ignorado ({email_usuario})")
+else:
+    if not st.user.is_logged_in:
+        st.title("Sistema de Gestão de Conteúdo")
+        st.info("Entre com sua conta Google para acessar o sistema.")
+
+        if st.button("Entrar com Google", type="primary"):
+            st.login("google")
+
+        st.stop()
+
+    email_usuario = st.user.get("email", "").strip().lower()
 
 if email_usuario not in USUARIOS_AUTORIZADOS:
     st.error("Sua conta Google não está autorizada a acessar este sistema.")
@@ -46,6 +67,13 @@ if email_usuario not in USUARIOS_AUTORIZADOS:
         st.logout()
 
     st.stop()
+
+# Diagnóstico temporário da integração com Google Drive
+try:
+    token_drive = st.user.tokens.get("google", {}).get("access_token")
+    st.write("Token Google disponível:", bool(token_drive))
+except Exception as erro:
+    st.warning(f"Não foi possível verificar o token: {type(erro).__name__}")
 
 
 # Identidade visual do protótipo. Não altera a lógica de dados.
