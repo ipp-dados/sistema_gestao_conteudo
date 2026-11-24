@@ -37,6 +37,23 @@ Cada pasta contém quatro arquivos, criados a partir de [`_templates/`](_templat
 | `spec/AAAA-MM-DD_nome` | Implementação de **uma** especificação: código, `tasks.md` e `validation.md`. Criada a partir de `planning` depois que o `spec.md` e o `plan.md` forem aprovados |
 | `main` | Versão publicada. Recebe as especificações concluídas por Pull Request |
 
+### Política de branches
+
+1. **O repositório compartilhado é sempre `ipp-dados/sistema_gestao_conteudo`** (remoto `origin`). Branches e Pull Requests da equipe são abertos nele; forks pessoais não são a referência do projeto.
+2. **`main` é protegida.** Só recebe mudanças por Pull Request no repositório `ipp-dados/sistema_gestao_conteudo`, com o `validation.md` preenchido. Não se fazem commits diretamente nela.
+3. **`planning` é permanente e acompanha `main`.** Depois de cada Pull Request aceito em `main`, a `planning` é atualizada com `main`, para que as próximas especificações partam do código atual:
+
+   ```bash
+   git switch planning && git pull
+   git fetch origin && git merge origin/main
+   git push
+   ```
+
+4. **As branches `spec/...` são temporárias.** Cada uma é criada a partir da `planning` atualizada, gera um único Pull Request para `main` e é apagada depois do merge (`git branch -d` e `git push origin --delete`).
+5. **`initial_setup`** (configuração local e estrutura de `specs/`) entra em `main` por um único Pull Request e é apagada depois.
+6. **`feature/google-drive`** (Waleska) continua como está, por enquanto. A forma de trazê-la para o fluxo de especificações será combinada com a responsável.
+7. **Correções pequenas:** a definir pela equipe se exigem especificação ou se podem usar uma branch `fix/descricao` com Pull Request.
+
 ## Fluxo
 
 1. **Na branch `planning`**, criar a pasta a partir dos modelos:
@@ -57,7 +74,7 @@ Cada pasta contém quatro arquivos, criados a partir de [`_templates/`](_templat
 5. Quebrar o plano em `tasks.md` e implementar uma tarefa por vez, marcando cada uma como concluída.
 6. Preencher o `validation.md` com as evidências de cada critério de aceitação.
 7. Abrir um Pull Request para `main`, com o link para a pasta da especificação.
-8. Atualizar a situação da especificação no `roadmap.md`, na branch `planning`.
+8. Depois do merge, atualizar a `planning` com `main`, apagar a branch da especificação e atualizar a situação da especificação no `roadmap.md`, na branch `planning`.
 
 Se a implementação exigir mudanças no `spec.md` ou no `plan.md`, elas são feitas na branch da especificação e registradas no "Histórico de decisões" do `spec.md`.
 

@@ -58,8 +58,14 @@ Regras que toda especificação, todo plano e todo código devem respeitar. Um p
 1. Cada critério de aceitação do `spec.md` tem uma evidência correspondente no `validation.md`.
 2. Testes que gravam dados usam o armazenamento CSV local ou uma planilha de testes própria, nunca a planilha compartilhada da equipe.
 
+## 9. Agentes de IA
+
+1. Quando houver dúvida sobre requisito, escopo, prioridade ou qualquer decisão que caiba à equipe, o agente pergunta antes de agir, em vez de supor. Para isso, usa a ferramenta de perguntas estruturadas do próprio agente (`AskUserQuestion` no Claude Code; o equivalente em outros agentes).
+2. As perguntas são agrupadas: o agente reúne todas as dúvidas pendentes e as faz de uma só vez, em vez de interromper o trabalho a cada dúvida.
+3. Não se pergunta o que pode ser respondido pelo código, pela documentação ou por estas regras.
+
 ## Emendas
 
 | Data | Regra | Mudança | Motivo | Aprovada por |
 |---|---|---|---|---|
-| | | | | |
+| 2026-11-24 | 9.1–9.3 | Inclusão da seção "Agentes de IA" | Evitar suposições dos agentes e reduzir interrupções | leoaucar |

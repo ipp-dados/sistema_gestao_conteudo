@@ -59,4 +59,6 @@ The modules form a single path from the app to the datastore:
 
 ## Branches
 
+The full branch policy is in `specs/README.md` ("Política de branches"). In short: the shared repo is always `ipp-dados/sistema_gestao_conteudo` (`origin`) and all PRs target it, `main` only takes PRs, `planning` is merged with `main` after every merged PR, and `spec/...` branches are deleted after their merge. Do not change `feature/google-drive` without the owner's agreement.
+
 `main` is the deployed app. `planning` holds the project and planning documents. `spec/YYYY-MM-DD_name` branches implement one spec each. `feature/google-drive` (Waleska) is the Drive integration work in progress. `initial_setup` holds the local-dev setup (login bypass, CSV storage, templates, `specs/` structure) with `feature/google-drive` merged in.
