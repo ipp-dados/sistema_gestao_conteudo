@@ -15,12 +15,12 @@ from repositorio_sheets import (
     atualizar_conteudo,
 )
 
-
 st.set_page_config(
-    page_title="Gestão de Conteúdo | Primeira Infância",
-    page_icon="📚",
+    page_title="Sistema de Gestão de Conteúdo",
+    page_icon="📊",
     layout="wide",
 )
+
 
 # Autenticação Google e controle de acesso
 USUARIOS_AUTORIZADOS = {
@@ -67,6 +67,13 @@ if email_usuario not in USUARIOS_AUTORIZADOS:
         st.logout()
 
     st.stop()
+
+# Diagnóstico temporário da integração com Google Drive
+try:
+    token_drive = st.user.tokens.get("google", {}).get("access_token")
+    st.write("Token Google disponível:", bool(token_drive))
+except Exception as erro:
+    st.warning(f"Não foi possível verificar o token: {type(erro).__name__}")
 
 
 # Identidade visual do protótipo. Não altera a lógica de dados.
