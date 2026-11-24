@@ -377,13 +377,41 @@ pip install -r requirements.txt
 
 A versão de Python acima é uma referência para criação de ambiente, não uma garantia de que todas as dependências tenham sido validadas especificamente nessa versão.
 
+
 ### 9.4. Configurar a autenticação
 
-O acesso ao Google Sheets utiliza OAuth 2.0.
+O sistema utiliza autenticação Google OAuth 2.0 e
+controle de acesso por usuários autorizados.
 
-As credenciais devem ser obtidas e configuradas de acordo com as permissões concedidas ao usuário e com as orientações do responsável pela infraestrutura.
+O arquivo `.streamlit/secrets.toml.example` disponibiliza
+um modelo de configuração para os desenvolvedores.
 
-Arquivos de credenciais e tokens não são distribuídos pelo repositório.
+Para configurar o ambiente:
+
+1. Copiar `.streamlit/secrets.toml.example` para
+   `.streamlit/secrets.toml`.
+2. Substituir os valores fictícios pelas credenciais
+   autorizadas.
+3. Configurar a URL de redirecionamento conforme
+   o ambiente de execução.
+4. Configurar a autenticação do Google Sheets.
+
+No ambiente local, o Google Sheets pode utilizar
+credenciais OAuth por meio do arquivo `credentials.json`.
+Nesse caso, omitir a seção `[gcp_service_account]`.
+
+No Streamlit Community Cloud, as credenciais devem
+ser configuradas na área Secrets da aplicação.
+
+A integração com o Google Drive está em desenvolvimento.
+
+Os arquivos reais de configuração, credenciais e tokens
+não devem ser versionados. O `.gitignore` contém regras
+para impedir sua inclusão acidental no repositório.
+
+Somente os modelos de configuração com valores
+fictícios devem ser compartilhados pelo GitHub.
+
 
 ### 9.5. Executar a aplicação
 
