@@ -21,6 +21,15 @@ uv venv .venv && uv pip install -p .venv/bin/python -r requirements.txt
 
 There is no test suite, linter or build step. To exercise a page without a browser, use `streamlit.testing.v1.AppTest.from_file("app.py")` and set `at.secrets[...]` by hand. AppTest does not read `.streamlit/secrets.toml`.
 
+## Spec-driven development
+
+All work follows the spec-driven workflow in `specs/README.md`. Read `specs/constitution.md` and `specs/tech-stack.md` before planning or writing code; a plan that breaks a constitution rule needs an amendment first.
+
+- Project documents (`stakeholders_description.md`, `roadmap.md`, `constitution.md`, `tech-stack.md`) and each spec's `spec.md` + `plan.md` are written on the `planning` branch.
+- Each spec is implemented on its own branch `spec/YYYY-MM-DD_name`, created from `planning`, with its folder `specs/YYYY-MM-DD_name/` (copied from `specs/_templates/`). `tasks.md` and `validation.md` are filled there.
+- Do not implement without an approved `spec.md` and `plan.md`. Every acceptance criterion needs evidence in `validation.md`.
+- Skills per phase (Claude Code names): `plan.md` → plan mode / `Plan` agent, `frontend-design` (UI), `dataviz` (charts); `tasks.md` → `simplify`; `validation.md` → `run`, `code-review`, and `security-review` for auth/credentials/permissions/personal data.
+
 ## Configuration
 
 Everything goes in `.streamlit/secrets.toml` (gitignored; the template is `.streamlit/secrets.toml.example`; the full guide is `SETUP_LOCAL.md`):
@@ -50,4 +59,4 @@ The modules form a single path from the app to the datastore:
 
 ## Branches
 
-`main` is the deployed app. `feature/google-drive` (Waleska) is the Drive integration work in progress. `initial_setup` holds the local-dev setup (login bypass, CSV storage, templates) with `feature/google-drive` merged in.
+`main` is the deployed app. `planning` holds the project and planning documents. `spec/YYYY-MM-DD_name` branches implement one spec each. `feature/google-drive` (Waleska) is the Drive integration work in progress. `initial_setup` holds the local-dev setup (login bypass, CSV storage, templates, `specs/` structure) with `feature/google-drive` merged in.
