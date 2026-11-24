@@ -23,6 +23,7 @@ __pycache__/
 # Dados locais de teste
 conteudos_teste.json
 teste_importacao_*.json
+dados_locais/
 
 venv*
 

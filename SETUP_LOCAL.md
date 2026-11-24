@@ -46,6 +46,7 @@ The email you log in with must be in `USUARIOS_AUTORIZADOS` in `app.py`.
 
 ### 4. Google Sheets access: pick one
 
+- **Local CSV, no Google access needed (for testing):** under `[dev]` in secrets, set `armazenamento = "csv"` (and optionally `arquivo_csv = "dados_locais/conteudos.csv"`, the default). The app then reads and writes that CSV instead of the spreadsheet; it is created with the header row on first use and is gitignored. The page still says "Google Sheets" because the labels are hardcoded. Never set this on Streamlit Cloud.
 - **Service account (recommended, same as Streamlit Cloud):** copy the `[gcp_service_account]` block from Streamlit Cloud → app → Settings → Secrets, or fill it in from the service account's JSON key. The spreadsheet must be shared with the account's `client_email` as Editor.
 - **Personal OAuth:** remove `[gcp_service_account]` from secrets. Download a **Desktop app** OAuth client JSON from Google Cloud Console and save it as `credentials.json` in the project root (see `credentials.json.example`). On the first run a browser opens to authorize, and `token.json` is created.
 
