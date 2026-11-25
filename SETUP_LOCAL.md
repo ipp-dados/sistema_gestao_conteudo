@@ -10,7 +10,7 @@ O sistema usa o Google em três partes independentes. Cada uma tem uma credencia
 |---|---|---|---|---|
 | **Login** (`st.login`) | Tela "Entrar com Google" e controle de usuários autorizados | Cliente OAuth do tipo **Aplicativo da Web** | `[auth.google]` no `secrets.toml` | Não: pode ser ignorado com `[dev] bypass_login` |
 | **Planilha** (Google Sheets) | Leitura e gravação dos conteúdos | Cliente OAuth do tipo **App para computador** (`credentials.json`) **ou** uma **conta de serviço** (`[gcp_service_account]`) | Raiz do projeto ou `secrets.toml` | Não: pode ser substituída por um CSV local |
-| **Google Drive** | Integração em desenvolvimento | Usa o token do login (escopo `drive.file`) | `[auth]` + `[auth.google]` | Não |
+| **Google Drive** | Envio do CSV de aprovados para Meu Drive | Usa o token do login (escopo `drive.file`) | `[auth]` + `[auth.google]` | Não |
 
 Para testar só a interface, não é preciso configurar nada no Google (veja o [Caminho rápido](#caminho-rápido-sem-google)).
 
@@ -97,7 +97,7 @@ Faça esta etapa uma vez por projeto. Se outra pessoa da equipe já tiver um pro
 Em **APIs e serviços → Biblioteca**, pesquise e ative:
 
 - **Google Sheets API**: necessária para acessar a planilha.
-- **Google Drive API**: necessária apenas para a integração com o Drive, ainda em desenvolvimento.
+- **Google Drive API**: necessária para enviar o CSV para Meu Drive.
 
 ### 3.3. Configurar a tela de consentimento
 

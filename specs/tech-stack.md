@@ -19,6 +19,7 @@ Versões instaladas no ambiente local em 24/11/2026:
 | streamlit | 1.65.0 | Interface, navegação, login (`st.login`) e `st.secrets` |
 | pandas | 2.3.3 | Leitura de CSVs de indicadores e exportação |
 | gspread | 6.2.1 | Leitura e gravação no Google Sheets |
+| google-api-python-client | Sem versão fixa | Cliente da API Drive v3 |
 | google-auth | 2.63.1 | Credenciais de conta de serviço e OAuth |
 | google-auth-oauthlib | 1.5.0 | Autorização no navegador para o `credentials.json` |
 | google-auth-httplib2 | 0.4.4 | Transporte HTTP das APIs Google |
@@ -34,7 +35,7 @@ Versões instaladas no ambiente local em 24/11/2026:
 | Google Sheets | Armazenamento dos conteúdos (aba `CONTEUDOS`) | `SPREADSHEET_ID` em `conexao_sheets.py` |
 | Google OAuth 2.0 | Login (cliente **Aplicativo da Web**) e acesso à planilha (cliente **App para computador**) | `[auth]`, `[auth.google]`, `credentials.json` |
 | Conta de serviço Google | Acesso à planilha no Cloud | `[gcp_service_account]` |
-| Google Drive API | Envio de arquivos CSV (em desenvolvimento) | Escopo `drive.file`, via token do login |
+| Google Drive API | Envio do CSV de aprovados para Meu Drive | Escopo `drive.file`, via token do login |
 | GitHub (`ipp-dados/sistema_gestao_conteudo`) | Código e Pull Requests | Fork de `waleskamarques-eng/sistema_gestao_conteudo` |
 
 ## Armazenamento
@@ -55,7 +56,7 @@ Estrutura dos registros: 9 colunas, nesta ordem: `id_projeto`, `id_conteudo`, `t
 
 - O Google Sheets não oferece transações nem restrições de unicidade. A troca por um banco de dados (por exemplo, PostgreSQL) está em avaliação e depende das políticas de dados do IPP.
 - No status "Em teste", a autorização OAuth expira em cerca de 7 dias.
-- Não há suíte de testes automatizados, linter nem integração contínua.
+- A exportação para o Drive tem testes automatizados direcionados. Ainda não há uma suíte geral, linter ou integração contínua.
 - As dependências não têm versões fixadas, o que pode mudar o comportamento entre instalações.
 
 ## Decisões pendentes

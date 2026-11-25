@@ -1,6 +1,6 @@
 # Plano de exportação CSV para o Google Drive
 
-Especificação [aprovada](spec.md) · Situação do plano **Em revisão**
+Especificação [aprovada](spec.md) · Plano **Aprovado** pelo solicitante
 
 ## Abordagem
 
@@ -36,4 +36,6 @@ O modo local com bypass deve preservar o download e indicar que o envio exige lo
 | CA5 | Exercitar o bloqueio de conta não autorizada e conferir que o cliente de envio não é chamado. |
 | CA6 | Verificar duas criações em dois envios explícitos, o nome com data e hora e a ausência de chamadas extras após reexecução. Com a resposta propositalmente atrasada, verificar o bloqueio visual durante o envio. |
 
-Executar os testes com armazenamento local e Drive simulado. Usar uma conta de teste autorizada para a validação manual de OAuth e envio. Registrar cenário, resultado e evidência em `validation.md`, sem credenciais nem dados pessoais. Fazer revisão de código e de segurança antes do PR.
+Executar os testes com armazenamento local e Drive simulado. Fazer a validação final no Streamlit Community Cloud com uma conta de teste autorizada e dados fictícios. Registrar cenário, resultado e evidência em `validation.md`, sem credenciais nem dados pessoais. Fazer revisão de código e de segurança antes do PR.
+
+Armazenamento compartilhado, listagem e leitura de CSVs e organização por projeto ficam para incrementos posteriores.

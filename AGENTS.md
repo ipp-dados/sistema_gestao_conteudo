@@ -19,7 +19,7 @@ uv venv .venv && uv pip install -p .venv/bin/python -r requirements.txt
 .venv/bin/python teste_gravacao_sheets.py    # writes a test row to the sheet (real write)
 ```
 
-There is no test suite, linter or build step. To exercise a page without a browser, use `streamlit.testing.v1.AppTest.from_file("app.py")` and set `at.secrets[...]` by hand. AppTest does not read `.streamlit/secrets.toml`.
+Os testes da exportação para o Drive rodam com `python -m unittest discover -s tests`. Não há linter nem etapa de build. Para exercitar uma página sem navegador, use `streamlit.testing.v1.AppTest.from_file("app.py")`.
 
 ## Spec-driven development
 
@@ -54,7 +54,7 @@ The modules form a single path from the app to the datastore:
 - **JSON import** (`importador_json.py`): validates a file shaped like `modelo_conteudo.json` (a `projeto` plus a list of `conteudos` with `CAMPOS_OBRIGATORIOS`), checks for duplicates against the current records, and maps each item to a sheet row with `preparar_conteudo_sheets` (`arquivos_dados` becomes `csv_associado`). It never writes on its own; `app.py` calls `cadastrar_conteudo` for each row.
 - **Indicator CSVs** (`leitor_csv.py`): read-only, from the sibling repo `../analise_primeira_infancia/tabelas_finais/`. If that folder is missing, the list is empty. `app.py` also accepts a manually uploaded CSV, which is not stored (Cloud has no persistent disk).
 - **Navigation:** `app.py` is one script. A sidebar `st.radio` picks the page (Início, Conteúdos, Indicadores, Importação JSON, Revisões, Exportação CSV). Success messages survive `st.rerun()` through `st.session_state["mensagem_sucesso"]`.
-- **Work in progress:** `conexao_drive.py` is empty, and the "Token Google disponível" block in `app.py` is a temporary diagnostic for the Drive integration. Under `bypass_login` there is no OAuth token, so that block shows a warning.
+- `conexao_drive.py` usa o token do login para enviar o CSV de aprovados à raiz de Meu Drive. Com `bypass_login`, apenas o download fica disponível.
 - `app_visual_demo.py` is a near-copy of `app.py` without the auth gate. Changes to shared behavior may need to be made in both files.
 
 ## Branches

@@ -1,7 +1,9 @@
 
 import pandas as pd
 import streamlit as st
+from googleapiclient.errors import HttpError
 
+from conexao_drive import TokenDriveIndisponivel, enviar_csv_drive
 from leitor_csv import listar_csvs, ler_csv
 from importador_json import (
     importar_json,
@@ -67,18 +69,6 @@ if email_usuario not in USUARIOS_AUTORIZADOS:
         st.logout()
 
     st.stop()
-
-# Diagnóstico temporário da integração com Google Drive
-from conexao_drive import testar_conexao_drive
-
-try:
-    testar_conexao_drive()
-    st.success("Sistema conectado ao Google Drive.")
-except Exception as erro:
-    st.warning(
-        f"Falha na conexão com Google Drive: {type(erro).__name__}"
-    )
-
 
 # Identidade visual do protótipo. Não altera a lógica de dados.
 st.markdown(
@@ -808,14 +798,44 @@ elif pagina == "Exportação CSV":
             hide_index=True,
         )
 
+        csv = df.to_csv(index=False).encode("utf-8-sig")
         st.download_button(
             "Baixar conteúdos aprovados (CSV)",
-            data=df.to_csv(
-                index=False
-            ).encode("utf-8-sig"),
+            data=csv,
             file_name="conteudos_aprovados.csv",
             mime="text/csv",
         )
+
+        if email_dev or not st.user.tokens.get("access"):
+            st.info("Entre com o Google e autorize o acesso ao Drive para enviar o CSV.")
+        else:
+            botao_drive = st.empty()
+            if botao_drive.button("Enviar ao Google Drive", key="enviar_csv_drive"):
+                botao_drive.button("Enviando ao Google Drive…", disabled=True)
+                try:
+                    link = enviar_csv_drive(csv)
+                    st.session_state["resultado_envio_drive"] = ("sucesso", link)
+                except TokenDriveIndisponivel:
+                    st.session_state["resultado_envio_drive"] = (
+                        "erro", "Entre novamente com o Google para enviar o CSV."
+                    )
+                except Exception as erro:
+                    mensagem = (
+                        "Não foi possível confirmar o envio. Confira Meu Drive antes de tentar novamente."
+                    )
+                    if isinstance(erro, HttpError) and erro.resp.status in (401, 403):
+                        mensagem = "Confira a autorização do Google Drive e entre novamente com o Google."
+                    st.session_state["resultado_envio_drive"] = ("erro", mensagem)
+                st.rerun()
+
+            resultado = st.session_state.pop("resultado_envio_drive", None)
+            if resultado:
+                tipo, valor = resultado
+                if tipo == "sucesso":
+                    st.success("CSV salvo em Meu Drive.")
+                    st.link_button("Abrir no Google Drive", valor)
+                else:
+                    st.error(valor)
 
     else:
         st.info(

@@ -402,7 +402,7 @@ O passo a passo completo, incluindo a criação do projeto no Google Cloud e a o
 
 No Streamlit Community Cloud, a configuração é feita na área **Secrets** da aplicação, com a conta de serviço e o cliente **Aplicativo da Web**. A seção `[dev]` nunca deve ser usada no Cloud, porque desativa o login.
 
-A integração com o Google Drive está em desenvolvimento e usa o token do login (escopo `drive.file`).
+Na página **Exportação CSV**, usuários autenticados podem enviar o CSV de conteúdos aprovados para a raiz de **Meu Drive**. Cada envio cria um arquivo com data e hora no nome e exibe um link para abri-lo. O download continua disponível. A integração usa o token do login com o escopo `drive.file`.
 
 Os arquivos reais de configuração, credenciais e tokens não devem ser versionados. O `.gitignore` impede sua inclusão acidental no repositório. Somente os modelos com valores fictícios (`*.example`) são compartilhados pelo GitHub.
 

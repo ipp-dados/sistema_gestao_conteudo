@@ -18,7 +18,7 @@ Para identificar os usuários e controlar o acesso, o aplicativo utiliza informa
 
 O Google Sheets é utilizado para armazenar e consultar registros relacionados aos conteúdos cadastrados.
 
-A integração planejada com o Google Drive permitirá que usuários autorizados enviem, armazenem e consultem arquivos CSV associados aos conteúdos.
+Quando um usuário autorizado solicita o envio, o CSV de conteúdos aprovados é transferido para a raiz de Meu Drive da conta Google autenticada. O envio não altera as permissões de compartilhamento do arquivo.
 
 O acesso aos arquivos será limitado às permissões concedidas ao aplicativo e às regras de autorização implementadas no sistema.
 
