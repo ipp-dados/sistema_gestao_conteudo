@@ -48,11 +48,15 @@ if email_usuario not in USUARIOS_AUTORIZADOS:
     st.stop()
 
 # Diagnóstico temporário da integração com Google Drive
+from conexao_drive import testar_conexao_drive
+
 try:
-    token_drive = st.user.tokens.get("google", {}).get("access_token")
-    st.write("Token Google disponível:", bool(token_drive))
+    testar_conexao_drive()
+    st.success("Sistema conectado ao Google Drive.")
 except Exception as erro:
-    st.warning(f"Não foi possível verificar o token: {type(erro).__name__}")
+    st.warning(
+        f"Falha na conexão com Google Drive: {type(erro).__name__}"
+    )
 
 
 # Identidade visual do protótipo. Não altera a lógica de dados.
