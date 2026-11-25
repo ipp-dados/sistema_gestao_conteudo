@@ -8,7 +8,10 @@ Registre o que cada parte espera, com as palavras dela sempre que possível. Nã
 
 | Parte interessada | Papel | Contato / representante | Interesse principal |
 |---|---|---|---|
-| | | | |
+| Time de Dados | desenvolvedor e manutentor | Leonardo e Waleska |  |
+| GMA | usuario | Bruna e Juliana | |
+| GDPP | usuario | Carol e Bianca | |
+| CPAP | financiador/gestor | Diego Maggi | |
 
 ## Expectativas
 
