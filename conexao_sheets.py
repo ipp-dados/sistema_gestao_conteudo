@@ -51,7 +51,25 @@ def obter_credenciais():
     return credenciais
 
 
+def _csv_local():
+    """Caminho do CSV local se [dev] armazenamento = "csv" no secrets.toml."""
+    try:
+        dev = st.secrets.get("dev", {})
+    except Exception:
+        return None
+    if dev.get("armazenamento") != "csv":
+        return None
+    caminho = Path(dev.get("arquivo_csv", "dados_locais/conteudos.csv"))
+    return caminho if caminho.is_absolute() else PASTA_PROJETO / caminho
+
+
 def conectar_planilha():
+    caminho_csv = _csv_local()
+    if caminho_csv:
+        from armazenamento_local import AbaCSV
+
+        return AbaCSV(caminho_csv)
+
     credenciais = obter_credenciais()
 
     cliente = gspread.authorize(credenciais)

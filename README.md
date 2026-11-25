@@ -87,14 +87,23 @@ Os principais arquivos e módulos utilizados são:
 ```text
 sistema_gestao_conteudo/
 |
-|-- app.py
-|-- conexao_sheets.py
-|-- repositorio_sheets.py
+|-- app.py                      # aplicação principal (login + páginas)
+|-- app_visual_demo.py          # variante visual de demonstração, sem login
+|-- conexao_sheets.py           # autenticação e conexão com a planilha
+|-- repositorio_sheets.py       # leitura, cadastro e atualização de conteúdos
+|-- armazenamento_local.py      # CSV local que substitui a planilha nos testes
+|-- conexao_drive.py            # integração com o Google Drive (em desenvolvimento)
 |-- importador_json.py
 |-- leitor_csv.py
 |-- modelo_conteudo.json
 |-- teste_gravacao_sheets.py
 |-- requirements.txt
+|-- credentials.json.example    # modelo do cliente OAuth "App para computador"
+|-- .streamlit/
+|   |-- secrets.toml.example    # modelo de configuração
+|-- SETUP_LOCAL.md              # guia de configuração do ambiente e do Google Cloud
+|-- AGENTS.md                   # orientações para agentes de IA
+|-- POLITICA_PRIVACIDADE.md
 |-- README.md
 |-- .gitignore
 ```
@@ -345,72 +354,57 @@ A estrutura atual é adequada aos testes do protótipo, mas poderá ser revista 
 
 Para executar o sistema, são necessários:
 
-- Python e um ambiente virtual ou Conda.
+- Python 3.10 ou superior e um ambiente virtual (venv, uv ou Conda).
 - Git, para obtenção e versionamento do código.
 - Dependências descritas em `requirements.txt`.
-- Credenciais OAuth válidas e autorizadas.
-- Acesso à planilha Google Sheets configurada para o protótipo.
+
+Para usar os recursos do Google, também são necessários:
+
+- Um projeto no Google Cloud com as APIs do Google Sheets e do Google Drive ativadas.
+- Um cliente OAuth do tipo **Aplicativo da Web**, para o login no sistema.
+- Um cliente OAuth do tipo **App para computador** (`credentials.json`) **ou** uma conta de serviço, para acessar a planilha.
+- Acesso de Editor à planilha Google Sheets configurada para o protótipo.
+
+Para testes locais, o login e a planilha podem ser substituídos por um modo de desenvolvimento, sem nenhuma credencial do Google (ver seção 9.4).
 
 ### 9.2. Obter o projeto
 
-Após receber autorização de acesso ao repositório privado:
+Após receber autorização de acesso ao repositório:
 
 ```bash
-git clone https://github.com/waleskamarques-eng/sistema_gestao_conteudo.git
+git clone https://github.com/ipp-dados/sistema_gestao_conteudo.git
 cd sistema_gestao_conteudo
 ```
 
 ### 9.3. Configurar o ambiente Python
 
-Exemplo utilizando Conda:
-
 ```bash
-conda create -n gestao_conteudo python=3.11
-conda activate gestao_conteudo
-```
-
-Instalar as dependências:
-
-```bash
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-A versão de Python acima é uma referência para criação de ambiente, não uma garantia de que todas as dependências tenham sido validadas especificamente nessa versão.
-
+Também é possível usar Conda (`conda create -n gestao_conteudo python=3.11`) ou uv.
 
 ### 9.4. Configurar a autenticação
 
-O sistema utiliza autenticação Google OAuth 2.0 e
-controle de acesso por usuários autorizados.
+O passo a passo completo, incluindo a criação do projeto no Google Cloud e a obtenção de cada arquivo JSON, está em **[SETUP_LOCAL.md](SETUP_LOCAL.md)**. Resumo:
 
-O arquivo `.streamlit/secrets.toml.example` disponibiliza
-um modelo de configuração para os desenvolvedores.
+1. Copiar `.streamlit/secrets.toml.example` para `.streamlit/secrets.toml`.
+2. Escolher como cada parte será configurada:
 
-Para configurar o ambiente:
+| Parte | Desenvolvimento local rápido | Uso com o Google |
+|---|---|---|
+| Login | `[dev] bypass_login = true` | Cliente OAuth **Aplicativo da Web** → seção `[auth.google]` |
+| Planilha | `[dev] armazenamento = "csv"` (CSV local em `dados_locais/`) | `credentials.json` (cliente **App para computador**) **ou** conta de serviço → seção `[gcp_service_account]` |
 
-1. Copiar `.streamlit/secrets.toml.example` para
-   `.streamlit/secrets.toml`.
-2. Substituir os valores fictícios pelas credenciais
-   autorizadas.
-3. Configurar a URL de redirecionamento conforme
-   o ambiente de execução.
-4. Configurar a autenticação do Google Sheets.
+3. Confirmar que o e-mail de login está em `USUARIOS_AUTORIZADOS`, em `app.py`.
 
-No ambiente local, o Google Sheets pode utilizar
-credenciais OAuth por meio do arquivo `credentials.json`.
-Nesse caso, omitir a seção `[gcp_service_account]`.
+No Streamlit Community Cloud, a configuração é feita na área **Secrets** da aplicação, com a conta de serviço e o cliente **Aplicativo da Web**. A seção `[dev]` nunca deve ser usada no Cloud, porque desativa o login.
 
-No Streamlit Community Cloud, as credenciais devem
-ser configuradas na área Secrets da aplicação.
+A integração com o Google Drive está em desenvolvimento e usa o token do login (escopo `drive.file`).
 
-A integração com o Google Drive está em desenvolvimento.
-
-Os arquivos reais de configuração, credenciais e tokens
-não devem ser versionados. O `.gitignore` contém regras
-para impedir sua inclusão acidental no repositório.
-
-Somente os modelos de configuração com valores
-fictícios devem ser compartilhados pelo GitHub.
+Os arquivos reais de configuração, credenciais e tokens não devem ser versionados. O `.gitignore` impede sua inclusão acidental no repositório. Somente os modelos com valores fictícios (`*.example`) são compartilhados pelo GitHub.
 
 
 ### 9.5. Executar a aplicação
@@ -427,7 +421,7 @@ O Streamlit disponibilizará um endereço local, normalmente:
 http://localhost:8501
 ```
 
-A aplicação depende de conexão com a planilha para carregar os conteúdos.
+A aplicação depende de conexão com a planilha para carregar os conteúdos, exceto no modo CSV local.
 
 ## 10. Segurança e integridade dos dados
 
