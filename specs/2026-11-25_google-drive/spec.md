@@ -58,3 +58,4 @@ Pessoas autorizadas a acessar o sistema que precisam guardar no Google Drive os 
 |---|---|---|
 | 2026-11-25 | O rascunho incorpora a conexão inicial existente e define critérios de teste para a continuação da feature. | Aproveitar o trabalho da branch e estabelecer a evidência necessária para concluir a integração. |
 | 2026-11-25 | Aprovados a raiz de **Meu Drive** como destino, a criação de um novo CSV por envio explícito com data e hora no nome e o link **Abrir no Google Drive** após o sucesso. | Definir o comportamento da primeira entrega. |
+| 2026-11-26 | Aprovada a separação entre DEV, HML e PROD. A HML será temporária, com URL própria no Streamlit Community Cloud, vinculada à `feature/google-drive` e com planilha dedicada de dados fictícios. | Validar OAuth e Drive reais preservando a aplicação e a configuração existentes. |

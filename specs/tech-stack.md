@@ -32,7 +32,7 @@ Versões instaladas no ambiente local em 24/11/2026:
 | Serviço | Uso | Configuração |
 |---|---|---|
 | Streamlit Community Cloud | Hospedagem do app | Secrets na área de configurações do app; sem disco persistente |
-| Google Sheets | Armazenamento dos conteúdos (aba `CONTEUDOS`) | `SPREADSHEET_ID` em `conexao_sheets.py` |
+| Google Sheets | Armazenamento dos conteúdos (aba `CONTEUDOS`) | `[sheets].spreadsheet_id` nos Secrets do ambiente |
 | Google OAuth 2.0 | Login (cliente **Aplicativo da Web**) e acesso à planilha (cliente **App para computador**) | `[auth]`, `[auth.google]`, `credentials.json` |
 | Conta de serviço Google | Acesso à planilha no Cloud | `[gcp_service_account]` |
 | Google Drive API | Envio do CSV de aprovados para Meu Drive | Escopo `drive.file`, via token do login |

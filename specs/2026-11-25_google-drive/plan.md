@@ -27,6 +27,22 @@ O modo local com bypass deve preservar o download e indicar que o envio exige lo
 
 ## Validação
 
+### Ambientes
+
+| Ambiente | Execução | Dados e credenciais |
+|---|---|---|
+| DEV | Execução local | CSV local por padrão no desenvolvimento ou planilha de DEV configurada explicitamente. Se houver login real, usar cliente de DEV com callback local. |
+| HML | Novo app temporário no Community Cloud, com URL própria, repositório `ipp-dados/sistema_gestao_conteudo`, branch `feature/google-drive` e entrada `app.py`. | Planilha dedicada com dados fictícios, cliente OAuth e conta de serviço de HML. |
+| PROD | Aplicação existente na `main`. | Aplicação, URL, planilha, OAuth e Secrets atuais preservados nesta etapa. |
+
+### Ordem de implementação e configuração
+
+1. Na branch de homologação, externalizar o ID da planilha para `[sheets].spreadsheet_id` em `st.secrets`. Manter a seleção de CSV local antes dessa leitura. Quando o modo Sheets estiver ativo, exigir um valor não vazio e falhar antes de autenticar ou abrir uma planilha se faltar configuração. Atualizar o modelo de Secrets com valor fictício e verificar os caminhos de CSV local, ID configurado e ID ausente, sem acessar serviços reais. A migração de configuração de PROD deverá anteceder qualquer publicação futura desse código.
+2. Definir um subdomínio exclusivo disponível na tela de criação do app de HML. No Google Cloud Console, usar um projeto dedicado à HML, habilitar Google Drive API e Google Sheets API, configurar a tela de consentimento e criar um cliente OAuth do tipo Aplicativo da Web. Registrar exatamente `https://<subdominio-hml>.streamlit.app/oauth2callback`. Para público externo em modo de teste, cadastrar as duas contas necessárias ao ensaio, uma presente e outra ausente de `USUARIOS_AUTORIZADOS`, para distinguir o bloqueio do aplicativo do bloqueio do Google.
+3. Criar uma conta de serviço de HML e compartilhar exclusivamente a planilha de HML com ela. Usar permissão de leitor para a exportação. Conceder editor somente se houver teste autorizado de gravação. Na aba `CONTEUDOS`, manter as nove colunas do repositório na ordem prevista e inserir registros fictícios com status variados. O token do login da pessoa usuária autoriza o envio ao Drive. A conta de serviço lê a planilha.
+4. No painel do novo app, configurar `[sheets]`, `[gcp_service_account]`, `[auth]` e `[auth.google]`. Usar o callback da HML, um `cookie_secret` novo, `expose_tokens = ["access"]` e os escopos `openid email profile https://www.googleapis.com/auth/drive.file`. Manter `[dev]` apenas no ambiente local e inserir as credenciais somente no painel de Secrets da HML. Implantar quando a revisão com o ID configurável estiver disponível na branch remota.
+5. Validar CA1 a CA6 no navegador. Para CA6, observar o botão durante uma resposta atrasada e conferir a quantidade de arquivos criados. Se a latência natural for insuficiente, combinar uma forma temporária de induzir o atraso somente na HML. Registrar resultados e evidências sem dados pessoais ou credenciais.
+
 | Critério | Verificação planejada |
 |---|---|
 | CA1 | Comparar os bytes do download com os recebidos pelo cliente simulado e verificar que apenas os registros aprovados foram incluídos. |

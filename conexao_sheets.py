@@ -10,7 +10,6 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 
 PASTA_PROJETO = Path(__file__).resolve().parent
 
-SPREADSHEET_ID = "1LkM1kHIQX4gQNrjqFDGN82oN91JxnGcpGBBeBEmRNP4"
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
 ARQUIVO_CREDENCIAIS = PASTA_PROJETO / "credentials.json"
@@ -70,10 +69,17 @@ def conectar_planilha():
 
         return AbaCSV(caminho_csv)
 
+    try:
+        id_planilha = st.secrets.get("sheets", {}).get("spreadsheet_id")
+    except FileNotFoundError:
+        id_planilha = None
+    if not isinstance(id_planilha, str) or not id_planilha.strip():
+        raise ValueError("Configure [sheets].spreadsheet_id nos Secrets para usar o Google Sheets.")
+
     credenciais = obter_credenciais()
 
     cliente = gspread.authorize(credenciais)
-    planilha = cliente.open_by_key(SPREADSHEET_ID)
+    planilha = cliente.open_by_key(id_planilha.strip())
 
     return planilha.worksheet("CONTEUDOS")
 

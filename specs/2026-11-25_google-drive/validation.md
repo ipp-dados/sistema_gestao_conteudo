@@ -15,6 +15,14 @@ Em 25/11/2026, `python -m unittest discover -s tests -v` executou seis testes co
 
 ## Revisão de código e segurança
 
+Em 26/11/2026, `python -m unittest discover -s tests -v` passou com **9 testes** em Python 3.12.10 e Streamlit 1.67.0. Os seis testes de regressão do Drive passaram e os três testes da configuração demonstraram que:
+
+- O modo CSV local abre um arquivo temporário sem exigir ID nem autenticar no Google.
+- Com ID configurado, o cliente simulado abre a planilha correspondente e seleciona a aba `CONTEUDOS`.
+- Se a configuração estiver ausente ou o ID for vazio ou de tipo inválido, a conexão falha com uma mensagem de configuração antes da autenticação.
+
+O modelo de Secrets foi validado como TOML. Os testes não acessaram serviços reais nem alteraram configurações de PROD. A validação de OAuth e Drive reais segue pendente na HML.
+
 - A verificação de acesso precede a tela de exportação. O token permanece no cliente autenticado e a interface exibe mensagens fixas para falhas.
 - A criação usa `drive.file`, sem chamadas para modificar permissões de compartilhamento. A operação ocorre em memória e não altera a planilha.
 - `git diff --check` passou. Os arquivos de credenciais locais permaneceram fora do índice Git.

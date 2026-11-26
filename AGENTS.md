@@ -45,7 +45,7 @@ Everything goes in `.streamlit/secrets.toml` (gitignored; the template is `.stre
 
 The modules form a single path from the app to the datastore:
 
-`app.py` → `repositorio_sheets.py` → `conexao_sheets.conectar_planilha()` → a gspread `Worksheet` (tab `CONTEUDOS` of the hardcoded `SPREADSHEET_ID`) **or** `armazenamento_local.AbaCSV` when CSV mode is on.
+`app.py` → `repositorio_sheets.py` → `conexao_sheets.conectar_planilha()` → aba `CONTEUDOS` da planilha definida em `[sheets].spreadsheet_id` nos Secrets do ambiente, ou `armazenamento_local.AbaCSV` no modo CSV.
 
 - **Datastore contract:** the repository layer only uses `get_all_records()`, `append_row()`, `update(range_name="A{n}:I{n}", ...)` and `.title`. `AbaCSV` implements exactly these. If you use any other worksheet method, add it to `AbaCSV` too.
 - **Columns:** the 9 columns listed in `repositorio_sheets.COLUNAS` (mirrored in `armazenamento_local.COLUNAS_PADRAO`). Their order matters: updates write positionally to `A:I`, and row 1 is the header. The record key is the pair (`id_projeto`, `id_conteudo`).

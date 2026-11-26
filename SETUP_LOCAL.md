@@ -118,7 +118,7 @@ Este cliente permite que o Python acesse a planilha **com a sua própria conta G
 3. Clique em **Fazer download do JSON**.
 4. Salve o arquivo na **raiz do projeto** com o nome `credentials.json`. O conteúdo deve começar com a chave `"installed"`, como em `credentials.json.example`.
 5. No `secrets.toml`, **não** deixe a seção `[gcp_service_account]` com valores fictícios. Se ela existir, o sistema tentará usá-la em vez do `credentials.json`.
-6. Remova `armazenamento = "csv"` da seção `[dev]`, se estiver presente.
+6. Remova `armazenamento = "csv"` da seção `[dev]`, se estiver presente, e preencha `spreadsheet_id` na seção `[sheets]` com o ID da planilha do ambiente.
 7. Teste a conexão fora do Streamlit:
 
    ```bash
@@ -182,7 +182,7 @@ python -c "import json,sys; c=json.load(open(sys.argv[1]))['web']; print('client
 
 ## 4. Planilha
 
-O sistema acessa a planilha definida em `SPREADSHEET_ID` (`conexao_sheets.py`), na aba **`CONTEUDOS`**. Quem acessa (a sua conta, no caso do `credentials.json`, ou a conta de serviço) precisa ter permissão de **Editor**. Se você não tiver acesso, peça o compartilhamento à responsável pela planilha.
+O sistema acessa a aba **`CONTEUDOS`** da planilha definida em `[sheets].spreadsheet_id` nos Secrets. Use o trecho entre `/d/` e `/edit` na URL da planilha. A conta usada na conexão precisa de permissão de leitor para consultar e exportar ou de editor para gravar.
 
 Ao criar uma planilha nova para testes, a aba `CONTEUDOS` precisa ter, na linha 1, exatamente estas colunas, nesta ordem (A a I):
 
